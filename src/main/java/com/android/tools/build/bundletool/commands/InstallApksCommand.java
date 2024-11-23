@@ -79,6 +79,7 @@ public abstract class InstallApksCommand {
   private static final Flag<ImmutableList<Path>> ADDITIONAL_LOCAL_TESTING_FILES_FLAG =
       Flag.pathList("additional-local-testing-files");
   private static final Flag<Integer> TIMEOUT_MILLIS_FLAG = Flag.positiveInteger("timeout-millis");
+  private static final Flag<Boolean> INSTANT_FLAG = Flag.booleanFlag("instant");
 
   private static final SystemEnvironmentProvider DEFAULT_PROVIDER =
       new DefaultSystemEnvironmentProvider();
@@ -108,6 +109,8 @@ public abstract class InstallApksCommand {
   abstract AdbServer getAdbServer();
 
   public abstract Duration getTimeout();
+
+  public abstract boolean getInstant();
 
   public static Builder builder() {
     return new AutoValue_InstallApksCommand.Builder()
@@ -147,6 +150,8 @@ public abstract class InstallApksCommand {
 
     public abstract Builder setTimeout(Duration timeout);
 
+    public abstract Builder setInstant(boolean value);
+
     public abstract InstallApksCommand build();
   }
 
@@ -172,6 +177,7 @@ public abstract class InstallApksCommand {
     Optional<ImmutableList<Path>> additionalLocalTestingFiles =
         ADDITIONAL_LOCAL_TESTING_FILES_FLAG.getValue(flags);
     Optional<Integer> timeoutMillis = TIMEOUT_MILLIS_FLAG.getValue(flags);
+    Optional<Boolean> instant = INSTANT_FLAG.getValue(flags);
 
     flags.checkNoUnknownFlags();
 
@@ -187,6 +193,7 @@ public abstract class InstallApksCommand {
     countrySet.ifPresent(command::setCountrySet);
     additionalLocalTestingFiles.ifPresent(command::setAdditionalLocalTestingFiles);
     timeoutMillis.ifPresent(timeout -> command.setTimeout(Duration.ofMillis(timeout)));
+    instant.ifPresent(command::setInstant);
 
     return command.build();
   }
@@ -227,6 +234,7 @@ public abstract class InstallApksCommand {
               .setAllowTestOnly(getAllowTestOnly())
               .setGrantRuntimePermissions(getGrantRuntimePermissions())
               .setTimeout(getTimeout())
+              .setInstant(getInstant())
               .build();
 
       if (getDeviceId().isPresent()) {
@@ -274,7 +282,8 @@ public abstract class InstallApksCommand {
     ExtractApksCommand.Builder extractApksCommand =
         ExtractApksCommand.builder()
             .setApksArchivePath(getApksArchivePath())
-            .setDeviceSpec(deviceSpec);
+            .setDeviceSpec(deviceSpec)
+            .setInstant(getInstant());
     if (!Files.isDirectory(getApksArchivePath())) {
       extractApksCommand.setOutputDirectory(output);
     }
@@ -311,7 +320,8 @@ public abstract class InstallApksCommand {
     ExtractApksCommand.Builder extractApksCommand =
         ExtractApksCommand.builder()
             .setApksArchivePath(getApksArchivePath())
-            .setDeviceSpec(addAllSupportedLanguages(deviceSpec, toc));
+            .setDeviceSpec(addAllSupportedLanguages(deviceSpec, toc))
+            .setInstant(getInstant());
     if (!Files.isDirectory(getApksArchivePath())) {
       extractApksCommand.setOutputDirectory(output);
     }

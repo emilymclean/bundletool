@@ -93,13 +93,16 @@ public abstract class Device {
 
     public abstract Duration getTimeout();
 
+    public abstract boolean getInstant();
+
     public static Builder builder() {
       return new AutoValue_Device_InstallOptions.Builder()
           .setTimeout(DEFAULT_ADB_TIMEOUT)
           .setAllowReinstall(true)
           .setAllowDowngrade(false)
           .setGrantRuntimePermissions(false)
-          .setAllowTestOnly(false);
+          .setAllowTestOnly(false)
+          .setInstant(false);
     }
 
     /** Builder for {@link InstallOptions}. */
@@ -114,6 +117,8 @@ public abstract class Device {
       public abstract Builder setAllowTestOnly(boolean allowTestOnly);
 
       public abstract Builder setGrantRuntimePermissions(boolean value);
+
+      public abstract Builder setInstant(boolean value);
 
       public abstract InstallOptions build();
     }

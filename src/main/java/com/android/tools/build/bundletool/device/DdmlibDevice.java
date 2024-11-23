@@ -173,6 +173,13 @@ public class DdmlibDevice extends Device {
         && device.getVersion().isGreaterOrEqualThan(AndroidVersion.VersionCodes.M)) {
       extraArgs.add("-g");
     }
+    if (installOptions.getInstant()) {
+      if (device.getVersion().isGreaterOrEqualThan(AndroidVersion.VersionCodes.O)) {
+        extraArgs.add("--instant");
+      } else {
+        extraArgs.add("--ephemeral");
+      }
+    }
 
     try {
       if (getVersion()
