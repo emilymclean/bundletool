@@ -116,6 +116,7 @@ public abstract class InstallApksCommand {
     return new AutoValue_InstallApksCommand.Builder()
         .setAllowDowngrade(false)
         .setAllowTestOnly(false)
+        .setInstant(false)
         .setGrantRuntimePermissions(false)
         .setTimeout(Device.DEFAULT_ADB_TIMEOUT);
   }
@@ -448,6 +449,12 @@ public abstract class InstallApksCommand {
                 .setDescription(
                     "If set, allows APKs to be installed on the device even if the app is already "
                         + "installed with a lower version code.")
+                .build())
+        .addFlag(
+            FlagDescription.builder()
+                .setFlagName(INSTANT_FLAG.getName())
+                .setOptional(true)
+                .setDescription("If set, allows installs instant app APKs.")
                 .build())
         .addFlag(
             FlagDescription.builder()
